@@ -1,0 +1,15 @@
+body {
+  font-family: sans-serif;
+}
+
+a, a:visited, a:active {
+  color: black;
+  text-decoration: none;
+}
+
+@mixin flexo($d:row, $j:center, $a:center) {
+  display: flex;
+  flex-direction: $d;
+  justify-content: $j;
+  align-items: $a;
+}

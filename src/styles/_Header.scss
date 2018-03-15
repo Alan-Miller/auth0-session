@@ -1,0 +1,15 @@
+.banner {
+  width: 100vw;
+  height: 200px;
+  background-color: #222;
+  color: white;
+  @include flexo;
+  h2 { font-size: 48px; }
+  .logout { 
+    font-size: 22px; 
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+  }
+}

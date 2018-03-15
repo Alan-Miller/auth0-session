@@ -21,4 +21,9 @@ module.exports = app => {
         else console.log('No user found.', user);
       });
   });
+
+  app.get('/api/image', (req, res) => {
+    if (req.session.image) res.status(200).send(req.session.image);
+    else res.status(404).send('No image found');
+  });
 }

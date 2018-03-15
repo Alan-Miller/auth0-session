@@ -3,7 +3,6 @@ require('dotenv').config(); // allows environment variables
 const express = require('express')
     , bodyParser = require('body-parser')
     , session = require('express-session')
-    , currentSession = require(`${__dirname}/middlewares/session.js`)
     , massive = require('massive')
     , passport = require('passport')
     , Auth0Strategy = require('passport-auth0')
@@ -27,9 +26,8 @@ app.use(session({
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 13000 } // sesson lasts 13 seconds
+  cookie: { maxAge: 900000 } // sesson lasts 5 minutes
 }));
-app.use(currentSession);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -41,9 +39,12 @@ passport.use(new Auth0Strategy(
     callbackURL: AUTH_CALLBACK_URL
   },
   (accessToken, refreshToken, extraParams, profile, done) => {
-    // console.log('PROFILE', profile);
+    // Use profile user_id to get user from db
     app.get('db').GET_user_by_auth_id([profile.identities[0].user_id])
-    .then(user => {if (user[0]) done(null, user[0].id);});
+    // If there is a user, store the user id
+    .then(user => { 
+      if (user[0]) done(null, user[0].id); 
+    });
   }
 ));
 
@@ -51,7 +52,7 @@ passport.use(new Auth0Strategy(
 app.get('/auth', passport.authenticate('auth0'));
 app.get('/auth/callback', passport.authenticate('auth0', 
   {
-    successRedirect: 'http://localhost:3221/#/',
+    successRedirect: 'http://localhost:3401/#/Dashboard/',
     failureRedirect: '/auth',
     failureFlash: true
   }
@@ -60,12 +61,11 @@ app.get('/auth/callback', passport.authenticate('auth0',
 app.get('/auth/me', (req, res) => {
   if (!req.user) res.status(404).send('User not found!');
   else res.status(200).send(req.user);
-  console.log('req.user', req.user);
 });
 
 app.get('/auth/logout', (req, res) => {
   req.logOut();
-  res.redirect(302, '/auth');
+  res.redirect(302, 'http://localhost:3401/');
 });
 
 passport.serializeUser((id, done) => done(null, id));

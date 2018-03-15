@@ -1,0 +1,18 @@
+.Settings {
+  display: inline-block;
+  // background-color: red;
+  margin: 10px 50px;
+}
+
+.imageButton {
+  background-position: center;
+  background-size: cover;
+  height: 70px;
+  width: 210px;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+
+.images {
+  @include flexo(column);
+}
